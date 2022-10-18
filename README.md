@@ -13,13 +13,13 @@ It consists of the following general steps
 Illustration of the conceptual design of PyVecContour
 ![image](https://user-images.githubusercontent.com/96234482/196321211-77ddcf0b-22b8-4a85-b458-ea9ae269443d.png)
 
-Rotate vs non-rotate
+Non-rotate vs rotate
 
 ![image](https://user-images.githubusercontent.com/96234482/196320862-3d003d7e-a92e-445c-ae57-705cb16b8f05.png)
 
 ## Examples
 
-Rotate (a) vs non-rotate (b)
+non-rotate (a) vs rotate (b)
 
 ![image](https://user-images.githubusercontent.com/96234482/196321988-f7946c59-af50-4481-9821-ba4ea512bfff.png)
 
