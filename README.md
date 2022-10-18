@@ -9,14 +9,11 @@ It consists of the following general steps
 5. cropping the area
 6. Outputting results
 
+Illustration of the conceptual design of PyVecContour
+![image](https://user-images.githubusercontent.com/96234482/196321211-77ddcf0b-22b8-4a85-b458-ea9ae269443d.png)
+Rotate vs non-rotate
+![image](https://user-images.githubusercontent.com/96234482/196320862-3d003d7e-a92e-445c-ae57-705cb16b8f05.png)
 
-![image](https://user-images.githubusercontent.com/96234482/196318784-fe889e72-be8a-4948-9c53-a44281899737.png)
-![计算流程图](http://172.16.254.81/eps/image/nice.png)
-## 计算流程
-![计算流程图](http://172.16.254.81/eps/image/contour.png)
-
-## 为什么要旋转求最小面积？
-![计算流程图](http://172.16.254.81/eps/image/rotate_compare.png)
 
 ## Integrate with your tools
 
