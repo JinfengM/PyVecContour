@@ -9,6 +9,7 @@ It consists of the following general steps
 5. cropping the area
 6. Outputting results
 
+## Description
 Illustration of the conceptual design of PyVecContour
 ![image](https://user-images.githubusercontent.com/96234482/196321211-77ddcf0b-22b8-4a85-b458-ea9ae269443d.png)
 Rotate vs non-rotate
