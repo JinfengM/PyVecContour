@@ -8,6 +8,9 @@ It consists of the following general steps
 4. calculating the contours
 5. cropping the area
 6. Outputting results
+
+
+![image](https://user-images.githubusercontent.com/96234482/196318784-fe889e72-be8a-4948-9c53-a44281899737.png)
 ![计算流程图](http://172.16.254.81/eps/image/nice.png)
 ## 计算流程
 ![计算流程图](http://172.16.254.81/eps/image/contour.png)
