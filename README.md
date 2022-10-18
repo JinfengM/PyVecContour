@@ -15,6 +15,9 @@ Illustration of the conceptual design of PyVecContour
 Rotate vs non-rotate
 ![image](https://user-images.githubusercontent.com/96234482/196320862-3d003d7e-a92e-445c-ae57-705cb16b8f05.png)
 
+## Examples
+![image](https://user-images.githubusercontent.com/96234482/196321988-f7946c59-af50-4481-9821-ba4ea512bfff.png)
+
 
 ## Integrate with your tools
 
