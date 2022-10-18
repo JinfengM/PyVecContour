@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	<meta charset="utf-8">
+    <title>克里金等值面展示示例</title>
+    <link rel="stylesheet" href="../dist/ol.css" type="text/css">
+    <script src="../dist/ol-debug.js"></script>
+	<script src="../dist/kriging-contour.js"></script>
+	<script src="../dist/jquery-3.6.0.min.js"></script>
+    <style>
+    	#map{
+			height:100%;
+			width:100%;
+		}
+    </style>
+  </head>
+  <body>
+	<button onclick="showKrigingVector()">克里金矢量(Vector)</button>
+	<button onclick="showKrigingImage()">克里金图像(Image)</button>
+    <div id="map" class="map"></div>
+    <script>
+		let params={
+			mapCenter:[118, 32],
+			maxValue:100,
+			krigingModel:'exponential',//'exponential','gaussian','spherical'
+			krigingSigma2:0,
+			krigingAlpha:100,
+			canvasAlpha:0.9,
+			colors:["#006837", "#1a9850", "#66bd63", "#a6d96a", "#d9ef8b", "#ffffbf","#fee08b", 
+			"#fdae61", "#f46d43", "#d73027", "#a50026"]
+		};
+		//osm底图
+		let baseLayer = new ol.layer.Tile({
+			source: new ol.source.OSM()
+		});
+		
+		//测试点图层
+		var ptlayer=new ol.layer.Vector({
+		    name: "test_point_layer",
+			source: new ol.source.Vector(),
+			zIndex:4
+		});
+		//生成测试数据
+		let dataset = {
+			"type" : "FeatureCollection",
+			"features" : []
+		};
+
+		for (let i = 0; i < 100; i++) {
+			let feature={
+				"type" : "Feature",
+				"properties" : {
+					"level" : Math.random()*100
+				},
+				"geometry" : {
+					"type" : "Point",
+					"coordinates" : [params.mapCenter[0]+Math.random()*0.1-.05,params.mapCenter[1]+Math.random()*0.1-.05]
+				}
+			};
+			dataset.features.push(feature);
+		}
+		var format=new ol.format.GeoJSON();
+		ptlayer.getSource().addFeatures(format.readFeatures(dataset));
+
+		let map = new ol.Map({
+			target: 'map',
+			//layers: [baseLayer,ptlayer],
+			layers: [baseLayer],
+			view: new ol.View({
+				center: params.mapCenter,
+				projection: 'EPSG:4326',
+				zoom: 16
+			})
+		});
+
+		//克里金矢量等值面
+		let krigingVectorSource=new ol.source.Vector();
+		let krigingVectorLayer=new ol.layer.Vector({
+		    name:"kriging_layer",
+			source:krigingVectorSource,
+			zIndex:3,
+			style:function(feature,res){
+				//获取等值面分级的权重值
+				let _value=feature.get('level_index');
+				//根据权重值，计算所在颜色渲染的区间
+				//let level=parseInt(_value)/10;
+				let color=params.colors[level_index];
+
+				let style=new ol.style.Style({
+					fill: new ol.style.Fill({
+						color: color
+					}),
+					stroke:new ol.style.Stroke({
+						color: color,
+						width:3
+					})
+				})
+				return [style];
+			}
+		});
+		map.addLayer(krigingVectorLayer);
+		
+
+		//克里金栅格等值面
+		let krigingCanvasLayer=new ol.layer.Image({
+			zIndex:2
+        });
+        //向map添加图层
+        map.addLayer(krigingCanvasLayer);
+
+
+
+		//生成矢量等值面并渲染
+		function showKrigingVector(){
+			krigingCanvasLayer.setVisible(false);
+			krigingVectorSource.clear();
+			krigingVectorLayer.setVisible(true);
+
+
+			//生成克里金矢量等值面
+			console.log(new Date())
+			let kriging_contours=kriging.getVectorContour(dataset,'level',{
+				model:'exponential',
+				sigma2:0,
+				alpha:100
+			},[0,10,20,30,40,50,60,70,80,90,100]);
+			console.log(new Date())
+			console.log(kriging_contours)
+			var arry = ["20220517031831","20220517061223","20220517072002"];
+			var index = 0;
+			//setInterval(function () { //每10秒刷新一次图表
+				var data = $.get("http://172.16.254.81/eps/task/contour/data/data_"+arry[index]+".json",function(data){
+				let features=format.readFeatures(data);
+				krigingVectorSource.addFeatures(features);
+				index++;
+				if(index == 3){
+					index=0
+				}
+			});
+                 
+			//}, 1*1000);
+			//var data = $.get("http://192.168.139.5:8080/image/data_20220517031831.json",function(data){
+			//	let features=format.readFeatures(data);
+			//	krigingVectorSource.addFeatures(features);
+			//});
+			//let features=format.readFeatures(kriging_contours);
+			//krigingVectorSource.addFeatures(features);
+			//console.log(new Date())
+		}
+		function showKrigingImage(){
+			krigingVectorLayer.setVisible(false);
+
+			let imageSource=new ol.source.ImageCanvas({
+                canvasFunction:(extent, resolution, pixelRatio, size, projection) =>{
+                    let canvas = document.createElement('canvas');
+                    canvas.width = size[0];
+                    canvas.height = size[1];
+                    canvas.style.display='block';
+                    //设置canvas透明度
+                    canvas.getContext('2d').globalAlpha=params.canvasAlpha;                          
+
+                    //使用分层设色渲染
+					kriging.drawCanvasContour(dataset,'level',{
+						model:'exponential',
+						sigma2:0,
+						alpha:100
+					},canvas,[extent[0],extent[2]],[extent[1],extent[3]],params.colors);
+
+                    return canvas;
+                },
+                projection: 'EPSG:4326'
+			});
+			
+			krigingCanvasLayer.setSource(imageSource);
+			krigingCanvasLayer.setVisible(true);
+		}
+
+		
+		
+		
+    </script>
+  </body>
+</html>
